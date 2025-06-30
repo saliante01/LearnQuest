@@ -13,7 +13,7 @@ public class CambiarColorPorVoz : MonoBehaviour
     {
         comandosDeColor = new Dictionary<string, Action>()
         {
-            { "rojo", () => CambiarColor(Color.red) },
+            { "grin", () => CambiarColor(Color.red) },
             { "verde", () => CambiarColor(Color.green) },
             { "azul", () => CambiarColor(Color.blue) },
             { "amarillo", () => CambiarColor(Color.yellow) },
