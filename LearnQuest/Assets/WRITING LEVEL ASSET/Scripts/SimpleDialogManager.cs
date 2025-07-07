@@ -1,0 +1,144 @@
+﻿using TMPro;
+using UnityEngine;
+using UnityEngine.UI;
+using System.Collections;
+
+public class SimpleDialogManager : MonoBehaviour
+{
+    [Header("UI Inicial")]
+    public GameObject  TextoComplementario;
+    public TextMeshProUGUI initialDialogText;
+    public Button continueButton;
+    public GameObject segundoPanel;
+    [Header("UI de Evaluación")]
+    public GameObject infoImagePanel;
+    public TMP_InputField inputField1;
+    public TMP_InputField inputField2;
+    public TMP_InputField inputField3;
+    public Button validateButton;
+
+    [Header("Mensajes")]
+    public GameObject messagePanel;
+    public TextMeshProUGUI messageText;
+
+    [Header("Respuestas Correctas")]
+    public string correctWord1 = "John";
+    public string correctWord2 = "London";
+    public string correctWord3 = "25";
+
+    [Header("Texto de introducción")]
+    [TextArea(2, 5)]
+    public string[] introLines;
+    public float typingSpeed = 0.05f;
+
+    private int currentLineIndex = 0;
+    private bool isTyping = false;
+    private int failCounter = 0;
+
+    void Start()
+    {
+        //initialDialogPanel.SetActive(true);
+        infoImagePanel.SetActive(false);
+        messagePanel.SetActive(true); // ✅ importante
+        continueButton.gameObject.SetActive(false);
+        validateButton.gameObject.SetActive(false); // ✅ desactivar al inicio
+        TextoComplementario.SetActive(false);
+        continueButton.onClick.AddListener(ShowInformationCard);
+        validateButton.onClick.AddListener(ValidateAnswers);
+        segundoPanel.SetActive(false);
+        StartCoroutine(PlayIntroDialog());
+
+        inputField1.onValueChanged.AddListener(delegate { CheckInputFields(); });
+        inputField2.onValueChanged.AddListener(delegate { CheckInputFields(); });
+        inputField3.onValueChanged.AddListener(delegate { CheckInputFields(); });
+
+        inputField1.gameObject.SetActive(false);
+        inputField2.gameObject.SetActive(false);
+        inputField3.gameObject.SetActive(false);
+
+    }
+
+    IEnumerator PlayIntroDialog()
+    {
+        while (currentLineIndex < introLines.Length)
+        {
+            yield return StartCoroutine(TypeLine(introLines[currentLineIndex]));
+            currentLineIndex++;
+            yield return new WaitForSeconds(0.5f);
+        }
+
+        continueButton.gameObject.SetActive(true);
+    }
+
+    IEnumerator TypeLine(string line)
+    {
+        isTyping = true;
+        initialDialogText.text = "";
+
+        foreach (char c in line)
+        {
+            initialDialogText.text += c;
+            yield return new WaitForSeconds(typingSpeed);
+        }
+
+        isTyping = false;
+    }
+    void CheckInputFields()
+    {
+        bool allFilled = !string.IsNullOrWhiteSpace(inputField1.text) &&
+                         !string.IsNullOrWhiteSpace(inputField2.text) &&
+                         !string.IsNullOrWhiteSpace(inputField3.text);
+
+        validateButton.gameObject.SetActive(allFilled);
+    }
+    void ShowInformationCard()
+    {
+        //initialDialogPanel.SetActive(false);
+        TextoComplementario.SetActive(true);
+        infoImagePanel.SetActive(true);
+        //validateButton.gameObject.SetActive(true); // ✅ ahora puede validar
+        continueButton.gameObject.SetActive(false);
+        segundoPanel.SetActive(true);
+        inputField1.gameObject.SetActive(true);
+        inputField2.gameObject.SetActive(true);
+        inputField3.gameObject.SetActive(true);
+
+        
+
+    }
+
+    void ValidateAnswers()
+    {
+        string word1 = inputField1.text.Trim();
+        string word2 = inputField2.text.Trim();
+        string word3 = inputField3.text.Trim();
+
+        if (word1.Equals(correctWord1, System.StringComparison.OrdinalIgnoreCase) &&
+            word2.Equals(correctWord2, System.StringComparison.OrdinalIgnoreCase) &&
+            word3.Equals(correctWord3, System.StringComparison.OrdinalIgnoreCase))
+        {
+            ShowMessage("¡Excelente!");
+        }
+        else
+        {
+            failCounter++;
+            ShowMessage("Creo que algo no coincide.");
+            Debug.Log("Fallos acumulados: " + failCounter);
+        }
+    }
+
+    void ShowMessage(string msg)
+    {
+        
+        messagePanel.SetActive(true);
+        messageText.text = msg;
+        CancelInvoke(nameof(HideMessage));
+        Invoke(nameof(HideMessage), 2f);
+    }
+
+    void HideMessage()
+    {
+        // messagePanel.SetActive(false);
+        messageText.text = ""; 
+    }
+}
