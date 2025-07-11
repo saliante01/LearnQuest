@@ -21,14 +21,17 @@ namespace Assets.TestScene.Scripts
         }
     }
 
-    public class CambiarMesesPorVoz : MonoBehaviour
+    public class CheckearMesesPorVoz
     {
         private KeywordRecognizer _keywordRecognizer;
         private Dictionary<string, Action> _comandosReconocidos;
+        private List<ComandoVoz> _comandosMeses;
 
-        void Start()
+        public event Action<string> OnMesReconocido;
+
+        public CheckearMesesPorVoz()
         {
-            var comandosMeses = new List<ComandoVoz>
+            _comandosMeses = new List<ComandoVoz>
             {
                 new("yanuari", "January"),
                 new("februari", "February"),
@@ -38,21 +41,38 @@ namespace Assets.TestScene.Scripts
 
             _comandosReconocidos = new Dictionary<string, Action>();
 
-            foreach (var comando in comandosMeses)
+            foreach (var comando in _comandosMeses)
             {
                 _comandosReconocidos[comando.Pronunciacion] = () => MarcarMesComoReconocido(comando);
             }
+        }
 
+        public void Iniciar()
+        {
+            if (_keywordRecognizer != null) return;
 
             _keywordRecognizer = new KeywordRecognizer(_comandosReconocidos.Keys.ToArray());
             _keywordRecognizer.OnPhraseRecognized += OnKeywordRecognized;
             _keywordRecognizer.Start();
         }
 
+        public void Detener()
+        {
+            if (_keywordRecognizer != null && _keywordRecognizer.IsRunning)
+            {
+                _keywordRecognizer.Stop();
+                _keywordRecognizer.OnPhraseRecognized -= OnKeywordRecognized;
+            }
+        }
+
         private void OnKeywordRecognized(PhraseRecognizedEventArgs args)
         {
-            Debug.Log("Color reconocido: " + args.text);
-            _comandosReconocidos[args.text].Invoke();
+            Debug.Log("Mes reconocido: " + args.text);
+
+            if (_comandosReconocidos.TryGetValue(args.text, out var accion))
+                accion.Invoke();
+            else
+                Debug.LogWarning($"Palabra no reconocida: {args.text}");
         }
 
         private void MarcarMesComoReconocido(ComandoVoz comando)
@@ -61,12 +81,7 @@ namespace Assets.TestScene.Scripts
 
             comando.Reconocido = true;
             Debug.Log($"Mes reconocido: {comando.Nombre}");
-        }
-
-        void OnApplicationQuit()
-        {
-            if (_keywordRecognizer != null && _keywordRecognizer.IsRunning)
-                _keywordRecognizer.Stop();
+            OnMesReconocido?.Invoke(comando.Nombre);
         }
     }
 }
