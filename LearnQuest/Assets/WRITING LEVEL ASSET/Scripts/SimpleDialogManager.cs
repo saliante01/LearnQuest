@@ -141,4 +141,8 @@ public class SimpleDialogManager : MonoBehaviour
         // messagePanel.SetActive(false);
         messageText.text = ""; 
     }
+
+
+
+    
 }
