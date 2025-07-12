@@ -12,5 +12,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ef1c9f9095c3c7440a647f7b40dd6d7c, type: 3}
   m_Name: Enero
   m_EditorClassIdentifier: 
-  Imagen: {fileID: 21300000, guid: 93158abcae264984ba4a5417897827bc, type: 3}
+  Imagen: {fileID: 21300000, guid: b90c45240a3584c4f8e52fdf2d836ab3, type: 3}
   NombreMes: January
