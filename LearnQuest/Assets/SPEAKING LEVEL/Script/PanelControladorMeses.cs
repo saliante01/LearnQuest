@@ -32,15 +32,15 @@ namespace Assets.SPEAKING_LEVEL.Script
         {
             for (var i = 0; i < Portarretratos.Length; i++)
             {
-                if (Portarretratos[i].FotoMesActual == null)
-                {
-                    Respuesta.text = "";
-                    Debug.Log("Faltan imágenes por colocar");
-                    return;
-                }
-
+                if (Portarretratos[i].FotoMesActual != null) continue;
+                Respuesta.text = "";
+                Debug.Log("Faltan imágenes por colocar");
+                return;
+            }
+            
+            for (var i = 0; i < Portarretratos.Length; i++)
+            {
                 if (Portarretratos[i].NombreMesActual == _ordenCorrecto[i]) continue;
-
                 Debug.Log("El orden es incorrecto");
                 Respuesta.text = "El orden es incorrecto";
                 Respuesta.color = Color.red;

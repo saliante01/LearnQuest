@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 using UnityEngine.EventSystems;
 
 namespace Assets.SPEAKING_LEVEL.Script
@@ -9,6 +10,7 @@ namespace Assets.SPEAKING_LEVEL.Script
         private CanvasGroup _canvasGroup;
         private Vector2 _originalPosition;
         private Transform _originalParent;
+        public event Action<GameObject> OnComenzarArrastrar;
 
         private void Start()
         {
@@ -24,6 +26,7 @@ namespace Assets.SPEAKING_LEVEL.Script
             _canvasGroup.alpha = 0.6f;
             _canvasGroup.blocksRaycasts = false; 
             transform.SetParent(transform.root); 
+            OnComenzarArrastrar?.Invoke(gameObject);
         }
 
         public void OnDrag(PointerEventData eventData)

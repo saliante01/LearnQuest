@@ -18,9 +18,12 @@ namespace Assets.SPEAKING_LEVEL.Script
         
         public bool ReconocidoPorVoz { get; private set; } = false;
         
+        private Sprite _imagenInicial;
+        
         private void Start()
         {
             _imagen = GetComponent<Image>();
+            _imagenInicial = _imagen.sprite;
         }
 
         public void OnDrop(PointerEventData eventData)
@@ -61,13 +64,34 @@ namespace Assets.SPEAKING_LEVEL.Script
         {
             var fotoMesDisplay = nuevoObjeto.GetComponent<FotoMesDisplay>();
 
-            _imagen.sprite = fotoMesDisplay.FotoMes.Imagen;
             FotoMesActual = fotoMesDisplay.FotoMes;
-
             _objetoActual = nuevoObjeto;
 
+            _imagen.sprite = fotoMesDisplay.FotoMes.Imagen;
+
+            var arrastrable = nuevoObjeto.GetComponent<ImagenArrastrable>();
+            
+            if (arrastrable != null)
+            {
+                arrastrable.OnComenzarArrastrar -= LiberarSiContiene;
+                arrastrable.OnComenzarArrastrar += LiberarSiContiene;
+            }
+            
+            nuevoObjeto.GetComponent<CanvasGroup>().alpha = 0f;
             nuevoObjeto.transform.SetParent(transform);
-            nuevoObjeto.SetActive(false);
+        }
+        
+        private void LiberarSiContiene(GameObject objeto)
+        {
+            if (_objetoActual != objeto) return;
+            
+            _objetoActual.GetComponent<CanvasGroup>().alpha = 1f;
+            _objetoActual = null;
+            FotoMesActual = null;
+            _imagen.sprite = _imagenInicial;
+            OnFotoMesAsignada?.Invoke();
+            
+            Debug.Log($"Portarretrato liberó la imagen: {NombreMesActual}");
         }
         
         public void CambiarColorVerdoso()

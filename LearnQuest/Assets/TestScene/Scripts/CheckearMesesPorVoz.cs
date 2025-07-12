@@ -33,10 +33,10 @@ namespace Assets.TestScene.Scripts
         {
             _comandosMeses = new List<ComandoVoz>
             {
-                new("yanuari", "January"),
+                new("yenuari", "January"),
                 new("februari", "February"),
                 new("march", "March"),
-                new("april", "April"),
+                new("eipril", "April"),
             };
 
             _comandosReconocidos = new Dictionary<string, Action>();
