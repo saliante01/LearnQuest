@@ -54,6 +54,8 @@ namespace Assets.SPEAKING_LEVEL.Script
 
         private void OnMesReconocido(string mes)
         {
+            Debug.Log("Mes reconocido: " + mes);
+
             foreach (var portarretrato in Portarretratos)
             {
                 if (portarretrato.NombreMesActual == mes)
