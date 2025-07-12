@@ -43,11 +43,13 @@ namespace Assets.SPEAKING_LEVEL.Script
 
                 Debug.Log("El orden es incorrecto");
                 Respuesta.text = "El orden es incorrecto";
+                Respuesta.color = Color.red;
                 return;
             }
 
             Debug.Log("El orden es correcto");
             Respuesta.text = "El orden es correcto";
+            Respuesta.color = Color.green;
 
             _reconocedor.Iniciar();
         }
