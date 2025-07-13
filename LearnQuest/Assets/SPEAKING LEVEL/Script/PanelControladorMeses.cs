@@ -9,7 +9,8 @@ namespace Assets.SPEAKING_LEVEL.Script
         public Portarretrato[] Portarretratos;
         public TextMeshProUGUI Respuesta;
         private CheckearMesesPorVoz _reconocedor;
-
+        public TextMeshProUGUI inicioDeVoz;
+        public GameObject botonMenu;
         private readonly string[] _ordenCorrecto =
         {
             "January", "February", "March", "April", "May", "June", "July", "August", "September", "October",
@@ -48,10 +49,11 @@ namespace Assets.SPEAKING_LEVEL.Script
             }
 
             Debug.Log("El orden es correcto");
-            Respuesta.text = "El orden es correcto";
+            //Respuesta.text = "El orden es correcto";
             Respuesta.color = Color.green;
-
+            inicioDeVoz.text = "Excelente, ahora nombra los meses";
             _reconocedor.Iniciar();
+            Debug.Log("reconocedor iniciado");
         }
 
         private void OnMesReconocido(string mes)
@@ -78,8 +80,9 @@ namespace Assets.SPEAKING_LEVEL.Script
             if (!todosReconocidos) return;
 
             Debug.Log("Todos los meses han sido reconocidos por voz. Actividad finalizada.");
-            Respuesta.text = "¡Bien hecho! Has reconocido todos los meses.";
+            inicioDeVoz.text = "¡Bien hecho! Has reconocido todos los meses.";
             _reconocedor.Detener();
+            botonMenu.SetActive(true);
         }
 
         private void OnApplicationQuit()

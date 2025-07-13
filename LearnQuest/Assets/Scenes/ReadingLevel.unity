@@ -311,11 +311,12 @@ RectTransform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 507568177}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
-  m_Children: []
+  m_Children:
+  - {fileID: 2137742564}
   m_Father: {fileID: 1025868958}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
@@ -861,9 +862,8 @@ RectTransform:
   m_LocalScale: {x: 0, y: 0, z: 0}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 507568178}
   - {fileID: 746832193}
-  - {fileID: 2137742564}
+  - {fileID: 507568178}
   - {fileID: 947844976}
   - {fileID: 1878829234}
   - {fileID: 1291805384}
@@ -1674,16 +1674,16 @@ RectTransform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2137742563}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 1025868958}
+  m_Father: {fileID: 507568178}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -493, y: 487}
+  m_AnchoredPosition: {x: -321.98608, y: 106}
   m_SizeDelta: {x: 200, y: 50}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &2137742565
@@ -1716,16 +1716,15 @@ MonoBehaviour:
       m_Calls: []
   m_text: 'Hello! My name is Tom. I get dressed every morning.
 
-    Today, I am
-    wearing a red t-shirt and blue pants.
+    Today, I am wearing
+    a red t-shirt and blue pants.
 
-    I put on my green jacket because
-    it is cold.
-
-    I also wear my black shoes and my favorite blue hat.
+    I put on my green jacket because it is cold.
 
     I
-    love my clothes!'
+    also wear my black shoes and my favorite blue hat.
+
+    I love my clothes!'
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 125cb55b44b24c4393181402bc6200e6, type: 2}
   m_sharedMaterial: {fileID: 2100000, guid: 125cb55b44b24c4393181402bc6200e6, type: 2}

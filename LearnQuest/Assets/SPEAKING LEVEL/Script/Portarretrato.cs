@@ -99,5 +99,7 @@ namespace Assets.SPEAKING_LEVEL.Script
             if (_imagen != null)
                 _imagen.color = new Color(0.6f, 1f, 0.6f, 1f); 
         }
+
+      
     }
 }
