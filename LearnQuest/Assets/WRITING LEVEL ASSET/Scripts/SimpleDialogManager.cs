@@ -35,13 +35,15 @@ public class SimpleDialogManager : MonoBehaviour
     private bool isTyping = false;
     private int failCounter = 0;
 
+    public GameObject volverMenuBoton;
+   
     void Start()
     {
-        //initialDialogPanel.SetActive(true);
+        
         infoImagePanel.SetActive(false);
-        messagePanel.SetActive(true); // ✅ importante
+        messagePanel.SetActive(true); 
         continueButton.gameObject.SetActive(false);
-        validateButton.gameObject.SetActive(false); // ✅ desactivar al inicio
+        validateButton.gameObject.SetActive(false); 
         TextoComplementario.SetActive(false);
         continueButton.onClick.AddListener(ShowInformationCard);
         validateButton.onClick.AddListener(ValidateAnswers);
@@ -118,6 +120,8 @@ public class SimpleDialogManager : MonoBehaviour
             word3.Equals(correctWord3, System.StringComparison.OrdinalIgnoreCase))
         {
             ShowMessage("¡Excelente!");
+            volverMenuBoton.SetActive(true);
+            validateButton.gameObject.SetActive(false);
         }
         else
         {
@@ -131,15 +135,20 @@ public class SimpleDialogManager : MonoBehaviour
     {
         
         messagePanel.SetActive(true);
-        messageText.text = msg;
+        initialDialogText.text = msg;
         CancelInvoke(nameof(HideMessage));
-        Invoke(nameof(HideMessage), 2f);
     }
 
     void HideMessage()
     {
         // messagePanel.SetActive(false);
-        messageText.text = ""; 
+        initialDialogText.text = ""; 
+    }
+
+    public void VolverMenu() {
+
+        LevelLoader.LoadLevel("SampleScene");
+
     }
 
 
