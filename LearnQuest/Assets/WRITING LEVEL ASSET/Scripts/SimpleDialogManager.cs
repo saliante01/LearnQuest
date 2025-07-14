@@ -95,10 +95,10 @@ public class SimpleDialogManager : MonoBehaviour
     }
     void ShowInformationCard()
     {
-        //initialDialogPanel.SetActive(false);
+      
         TextoComplementario.SetActive(true);
         infoImagePanel.SetActive(true);
-        //validateButton.gameObject.SetActive(true); // ✅ ahora puede validar
+       
         continueButton.gameObject.SetActive(false);
         segundoPanel.SetActive(true);
         inputField1.gameObject.SetActive(true);
@@ -119,14 +119,14 @@ public class SimpleDialogManager : MonoBehaviour
             word2.Equals(correctWord2, System.StringComparison.OrdinalIgnoreCase) &&
             word3.Equals(correctWord3, System.StringComparison.OrdinalIgnoreCase))
         {
-            ShowMessage("¡Excelente!");
+            ShowMessage("¡Excelente!, Haz completado el nivel de Writing");
             volverMenuBoton.SetActive(true);
             validateButton.gameObject.SetActive(false);
         }
         else
         {
             failCounter++;
-            ShowMessage("Creo que algo no coincide.");
+            ShowMessage("Creo que algo no coincide, vuelve a intentarlo");
             Debug.Log("Fallos acumulados: " + failCounter);
         }
     }
