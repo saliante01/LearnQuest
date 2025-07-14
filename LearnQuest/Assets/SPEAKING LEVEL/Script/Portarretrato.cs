@@ -16,7 +16,7 @@ namespace Assets.SPEAKING_LEVEL.Script
         
         public string NombreMesActual => FotoMesActual != null ? FotoMesActual.NombreMes : "";
         
-        public bool ReconocidoPorVoz { get; private set; } = false;
+        public bool ReconocidoPorVoz { get; set; } = false;
         
         private Sprite _imagenInicial;
         
@@ -100,6 +100,17 @@ namespace Assets.SPEAKING_LEVEL.Script
                 _imagen.color = new Color(0.6f, 1f, 0.6f, 1f); 
         }
 
-      
+        public void DesabilitarArrastre()
+        {
+            if (_objetoActual == null) return;
+
+            var arrastrable = _objetoActual.GetComponent<ImagenArrastrable>();
+            if (arrastrable != null)
+                arrastrable.enabled = false;
+
+            var canvasGroup = _objetoActual.GetComponent<CanvasGroup>();
+            if (canvasGroup != null)
+                canvasGroup.blocksRaycasts = false; 
+        }
     }
 }

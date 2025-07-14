@@ -14,7 +14,7 @@ public class Dialog : MonoBehaviour
     public GameObject Marco2;
     public GameObject Marco3;
     public GameObject Marco4;
-    [Header("Diálogo")]
+    [Header("Diï¿½logo")]
     [TextArea]
     public string[] dialogos;
 
@@ -46,7 +46,7 @@ public class Dialog : MonoBehaviour
                 yield return new WaitForSeconds(0.05f); // 1 segundo por letra
             }
 
-            yield return new WaitForSeconds(0.5f); // Pausa antes del siguiente diálogo
+            yield return new WaitForSeconds(2.5f); // Pausa antes del siguiente diï¿½logo
         }
 
         if (BotonContinuar != null)

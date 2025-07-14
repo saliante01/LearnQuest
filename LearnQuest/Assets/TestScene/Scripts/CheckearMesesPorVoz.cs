@@ -58,10 +58,20 @@ namespace Assets.TestScene.Scripts
 
         public void Detener()
         {
-            if (_keywordRecognizer != null && _keywordRecognizer.IsRunning)
+            if (_keywordRecognizer is { IsRunning: true })
             {
                 _keywordRecognizer.Stop();
                 _keywordRecognizer.OnPhraseRecognized -= OnKeywordRecognized;
+                _keywordRecognizer.Dispose(); 
+                _keywordRecognizer = null;    
+            }
+        }
+        
+        public void ResetearReconocidos()
+        {
+            foreach (var comando in _comandosMeses)
+            {
+                comando.Reconocido = false;
             }
         }
 

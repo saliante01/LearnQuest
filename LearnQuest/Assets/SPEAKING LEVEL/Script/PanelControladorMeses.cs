@@ -1,3 +1,4 @@
+using System.Collections;
 using Assets.TestScene.Scripts;
 using TMPro;
 using UnityEngine;
@@ -11,11 +12,15 @@ namespace Assets.SPEAKING_LEVEL.Script
         private CheckearMesesPorVoz _reconocedor;
         public TextMeshProUGUI inicioDeVoz;
         public GameObject botonMenu;
+        
+        private const string MesFinalCorrecto = "January";
+
         private readonly string[] _ordenCorrecto =
         {
-            "January", "February", "March", "April", "May", "June", "July", "August", "September", "October",
-            "November", "December"
+            "January", "February", "March", "April"
         };
+
+        private int _indiceMesActual;
 
         private void Start()
         {
@@ -31,27 +36,40 @@ namespace Assets.SPEAKING_LEVEL.Script
 
         public void ValidarOrden()
         {
+            StartCoroutine(ValidarOrdenCoroutine());
+        }
+
+        private IEnumerator ValidarOrdenCoroutine()
+        {
             for (var i = 0; i < Portarretratos.Length; i++)
             {
                 if (Portarretratos[i].FotoMesActual != null) continue;
                 Respuesta.text = "";
                 Debug.Log("Faltan imágenes por colocar");
-                return;
+                yield break;
             }
-            
+
             for (var i = 0; i < Portarretratos.Length; i++)
             {
                 if (Portarretratos[i].NombreMesActual == _ordenCorrecto[i]) continue;
                 Debug.Log("El orden es incorrecto");
-                Respuesta.text = "El orden es incorrecto";
-                Respuesta.color = Color.red;
-                return;
+                Respuesta.text = "I think that's not the right order.";
+                yield break;
             }
 
             Debug.Log("El orden es correcto");
-            //Respuesta.text = "El orden es correcto";
-            Respuesta.color = Color.green;
-            inicioDeVoz.text = "Excelente, ahora nombra los meses";
+            
+            yield return StartCoroutine(MostrarMensajeYEsperar($"Good job! That looks like the right order.", 
+                "Now tell me the names. I'm searching for the one that begins with a 'y' sound."));
+            
+            foreach (var t in Portarretratos)
+            {
+                t.DesabilitarArrastre();
+            }
+
+            _indiceMesActual = 0;
+            yield return new WaitForSeconds(1.5f);
+            inicioDeVoz.text = $"Say the month: {_ordenCorrecto[_indiceMesActual]}";
             _reconocedor.Iniciar();
             Debug.Log("reconocedor iniciado");
         }
@@ -60,33 +78,96 @@ namespace Assets.SPEAKING_LEVEL.Script
         {
             Debug.Log("Mes reconocido: " + mes);
 
+            if (!EsMesEsperado(mes))
+            {
+                StartCoroutine(MostrarMensajeYEsperar($"That's not the sound of the correct name.", 
+                    $"Try again: {_ordenCorrecto[_indiceMesActual]}"));
+                return;
+            }
+
+            ProcesarMesCorrecto(mes);
+            _indiceMesActual++;
+            ActualizarEstadoTrasReconocimiento();
+        }
+
+        private IEnumerator MostrarMensajeYEsperar(string primerMensaje, string segundoMensaje)
+        {
+            inicioDeVoz.text = primerMensaje;
+            yield return new WaitForSeconds(1.5f); 
+            inicioDeVoz.text = segundoMensaje;
+        }
+        
+        private bool EsMesEsperado(string mes)
+        {
+            bool esperado = mes == _ordenCorrecto[_indiceMesActual];
+            if (!esperado)
+            {
+                Debug.Log($"Se esperaba {_ordenCorrecto[_indiceMesActual]}, pero se dijo {mes}");
+            }
+            return esperado;
+        }
+
+        private void ProcesarMesCorrecto(string mes)
+        {
             foreach (var portarretrato in Portarretratos)
             {
-                if (portarretrato.NombreMesActual == mes)
+                if (portarretrato.NombreMesActual == mes && !portarretrato.ReconocidoPorVoz)
                 {
                     portarretrato.CambiarColorVerdoso();
+                    portarretrato.ReconocidoPorVoz = true;
                 }
             }
+        }
 
-            var todosReconocidos = true;
-
-            foreach (var portarretrato in Portarretratos)
+        private void ActualizarEstadoTrasReconocimiento()
+        {
+            if (_indiceMesActual >= _ordenCorrecto.Length)
             {
-                if (portarretrato.ReconocidoPorVoz) continue;
-                todosReconocidos = false;
-                break;
+                Debug.Log("Todos los meses han sido reconocidos por voz.");
+                inicioDeVoz.text = "Nice job! You tell all the months.";
+                StartCoroutine(IniciarFaseFinal());
             }
+            else
+            {
+                inicioDeVoz.text = $"Nice job. Now say the month: {_ordenCorrecto[_indiceMesActual]}";
+            }
+        }
 
-            if (!todosReconocidos) return;
+        private IEnumerator IniciarFaseFinal()
+        {
+            yield return new WaitForSeconds(1.5f);
+            inicioDeVoz.text = "Tell me which month is best for me.";
 
-            Debug.Log("Todos los meses han sido reconocidos por voz. Actividad finalizada.");
-            inicioDeVoz.text = "¡Bien hecho! Has reconocido todos los meses.";
+            _reconocedor.Detener();
+            _reconocedor.ResetearReconocidos();
+            _reconocedor.OnMesReconocido -= OnMesReconocido;
+            _reconocedor.OnMesReconocido += OnMesCorrectoReconocido;
+            _reconocedor.Iniciar();
+        }
+
+        private void OnMesCorrectoReconocido(string mes)
+        {
+            if (mes != MesFinalCorrecto)
+            {
+                StartCoroutine(MostrarMensajeYEsperar(
+                    "That's not the sound of the correct name.",
+                    "Try again."
+                ));
+                _reconocedor.ResetearReconocidos();
+                return;
+            }
+            
+            inicioDeVoz.text = "Perfect! Thank you very much.";
+
+            Debug.Log("Actividad finalizada: Mes final reconocido correctamente.");
             _reconocedor.Detener();
             botonMenu.SetActive(true);
         }
 
         private void OnApplicationQuit()
         {
+            _reconocedor.OnMesReconocido -= OnMesReconocido;
+            _reconocedor.OnMesReconocido -= OnMesCorrectoReconocido;
             _reconocedor?.Detener();
         }
     }
