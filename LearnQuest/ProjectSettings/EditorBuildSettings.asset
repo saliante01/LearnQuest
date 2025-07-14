@@ -20,6 +20,12 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/ReadingLevel.unity
     guid: 01d2d3ef467ecbc44a8712f49a13fe1e
+  - enabled: 1
+    path: Assets/Scenes/ListeningLevel.unity
+    guid: a61a859397253b54e91c92babeaf9c36
+  - enabled: 1
+    path: Assets/Scenes/WritingLevel.unity
+    guid: c96f3102d724ff94c8ccc1cb05ce47f5
   m_configObjects:
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 052faaac586de48259a63d0c4782560b, type: 3}
   m_UseUCBPForAssetBundles: 0

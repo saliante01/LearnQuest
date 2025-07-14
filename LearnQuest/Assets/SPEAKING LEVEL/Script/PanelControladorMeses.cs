@@ -92,11 +92,11 @@ namespace Assets.SPEAKING_LEVEL.Script
 
         private IEnumerator MostrarMensajeYEsperar(string primerMensaje, string segundoMensaje)
         {
-            inicioDeVoz.text = primerMensaje;
-            yield return new WaitForSeconds(1.5f); 
-            inicioDeVoz.text = segundoMensaje;
+            yield return StartCoroutine(MostrarTextoComoDialogo(inicioDeVoz, primerMensaje));
+            yield return new WaitForSeconds(1f); // pequeña pausa entre mensajes
+            yield return StartCoroutine(MostrarTextoComoDialogo(inicioDeVoz, segundoMensaje));
         }
-        
+
         private bool EsMesEsperado(string mes)
         {
             bool esperado = mes == _ordenCorrecto[_indiceMesActual];
@@ -156,8 +156,8 @@ namespace Assets.SPEAKING_LEVEL.Script
                 _reconocedor.ResetearReconocidos();
                 return;
             }
-            
-            inicioDeVoz.text = "Perfect! Thank you very much.";
+
+            StartCoroutine(MostrarTextoComoDialogo(inicioDeVoz, "Perfect! Thank you very much."));
 
             Debug.Log("Actividad finalizada: Mes final reconocido correctamente.");
             _reconocedor.Detener();
@@ -169,6 +169,16 @@ namespace Assets.SPEAKING_LEVEL.Script
             _reconocedor.OnMesReconocido -= OnMesReconocido;
             _reconocedor.OnMesReconocido -= OnMesCorrectoReconocido;
             _reconocedor?.Detener();
+        }
+
+        private IEnumerator MostrarTextoComoDialogo(TextMeshProUGUI textoUI, string mensaje, float velocidad = 0.05f)
+        {
+            textoUI.text = "";
+            foreach (char letra in mensaje)
+            {
+                textoUI.text += letra;
+                yield return new WaitForSeconds(velocidad);
+            }
         }
     }
 }
