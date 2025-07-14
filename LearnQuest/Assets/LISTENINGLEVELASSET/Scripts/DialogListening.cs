@@ -12,7 +12,8 @@ public class DialogListening : MonoBehaviour
 
     private int currentLineIndex = 0;
     public bool isDialogueFinished = false;
-
+    public delegate void DialogFinishedHandler();
+    public event DialogFinishedHandler OnDialogFinished;
     void Start()
     {
         if (dialogLines.Length > 0)
@@ -20,6 +21,7 @@ public class DialogListening : MonoBehaviour
             StartCoroutine(PlayDialogue());
         }
     }
+
 
     IEnumerator PlayDialogue()
     {
@@ -32,6 +34,9 @@ public class DialogListening : MonoBehaviour
 
         dialogText.text = "";
         isDialogueFinished = true;
+
+        // Notificar que terminó el diálogo
+        OnDialogFinished?.Invoke();
     }
 
     IEnumerator TypeLine(string line)

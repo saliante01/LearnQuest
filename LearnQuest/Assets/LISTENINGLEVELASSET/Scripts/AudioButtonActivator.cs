@@ -1,18 +1,23 @@
-using UnityEngine;
+Ôªøusing UnityEngine;
 using UnityEngine.UI;
 public class AudioButtonActivator : MonoBehaviour
 {
-    public DialogListening dialogListening;     // Referencia al script de di·logo
-    public GameObject audioButtonObject;        // BotÛn que se activar·
-    public AudioSource audioSource;             // Componente que reproduce el audio
+    public DialogListening dialogListening;     // Referencia al script del di√°logo
+    public GameObject audioButtonObject;        // El bot√≥n que se activa
+    public AudioSource audioSource;             // Audio que se reproduce
+    public GameObject UIActiviti1;         // ‚Üê NUEVO: objeto que se activa una vez
 
     private Button audioButton;
+    private bool hasActivatedObject = false;    // ‚Üê NUEVO: control de activaci√≥n √∫nica
 
     void Start()
     {
         audioButton = audioButtonObject.GetComponent<Button>();
-        audioButtonObject.SetActive(false); // Ocultar el botÛn al inicio
+        audioButtonObject.SetActive(false);
         audioButton.onClick.AddListener(PlayAudio);
+
+        if (UIActiviti1 != null)
+            UIActiviti1.SetActive(false); // Opcional: empieza desactivado
     }
 
     void Update()
@@ -29,6 +34,14 @@ public class AudioButtonActivator : MonoBehaviour
         {
             audioSource.Play();
             audioButton.interactable = false;
+
+            // Activar el objeto solo la primera vez
+            if (!hasActivatedObject && UIActiviti1 != null)
+            {
+                UIActiviti1.SetActive(true);
+                hasActivatedObject = true;
+            }
+
             Invoke(nameof(EnableButton), audioSource.clip.length);
         }
     }
