@@ -20,12 +20,12 @@ namespace Assets.READING_LEVEL
         public Image Respuesta1;
         public Image Respuesta2;
         public Image Respuesta3;
-
+        public TextMeshProUGUI mainDialogSystemInfo;
         public List<Pregunta> Preguntas;
 
         private int _preguntaActual;
         private bool _respuestaFueCorrecta;
-
+        public GameObject continuarButton;
         private void Start()
         {
             _preguntaActual = 0;
@@ -53,7 +53,8 @@ namespace Assets.READING_LEVEL
             }
             else
             {
-                Debug.Log("Respuesta incorrecta. Se permite volver a intentar.");
+                mainDialogSystemInfo.text = "Oops creo que esa no es la respuesta, vuelve a intentarlo";
+                Debug.Log("Oops creo que esa no es la respuesta, vuelve a intentarlo");
                 _respuestaFueCorrecta = false;
             }
         }
@@ -89,7 +90,11 @@ namespace Assets.READING_LEVEL
         {
             Debug.Log("Actividad finalizada.");
             Pregunta.text = "¡Actividad completada!";
+            mainDialogSystemInfo.text = "Muy bien! Haz completado el nivel, presiona continuar para volver al menu";
             _preguntaActual = 0; 
+            continuarButton.SetActive(true);
         }
+
+
     }
 }

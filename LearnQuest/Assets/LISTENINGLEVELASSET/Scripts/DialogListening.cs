@@ -32,7 +32,7 @@ public class DialogListening : MonoBehaviour
             currentLineIndex++;
         }
 
-        dialogText.text = "";
+        
         isDialogueFinished = true;
 
         // Notificar que terminó el diálogo
