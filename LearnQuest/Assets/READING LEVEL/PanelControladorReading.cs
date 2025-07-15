@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 
 namespace Assets.READING_LEVEL
 {
@@ -8,84 +9,74 @@ namespace Assets.READING_LEVEL
     public class Pregunta
     {
         public string Texto;
-        public string[] Opciones;
-        public string RespuestaCorrecta;
-    }
-    
-    [System.Serializable]
-    public struct RespuestaDada
-    {
-        public string Pregunta;
-        public string Respuesta;
-        public bool Correcta;
-
-        public RespuestaDada(string pregunta, string respuesta, bool correcta)
-        {
-            Pregunta = pregunta;
-            Respuesta = respuesta;
-            Correcta = correcta;
-        }
+        public Sprite[] Opciones;
+        public int RespuestaCorrectaIndex;
     }
 
     public class PanelControladorReading : MonoBehaviour
     {
         public ContenedorRespuesta ContenedorRespuesta;
         public TextMeshProUGUI Pregunta;
-        public TextMeshProUGUI Respuesta1;
-        public TextMeshProUGUI Respuesta2;
-        public TextMeshProUGUI Respuesta3;
+        public Image Respuesta1;
+        public Image Respuesta2;
+        public Image Respuesta3;
 
-        [SerializeField] private List<Pregunta> _preguntas;
-        private readonly List<RespuestaDada> _respuestasDadas = new();
+        public List<Pregunta> Preguntas;
 
         private int _preguntaActual;
+        private bool _respuestaFueCorrecta;
 
         private void Start()
         {
             _preguntaActual = 0;
-            
-            _preguntas = new List<Pregunta>
-            {
-                new()
-                {
-                    Texto = "What color is Tom’s t-shirt?",
-                    Opciones = new[] { "His\nt-shirt is blue.", "His\nt-shirt is red.", "His\nt-shirt is green." },
-                    RespuestaCorrecta = "His\nt-shirt is red."
-                },
-                new()
-                {
-                    Texto = "Why does Tom wear a jacket?",
-                    Opciones = new[] { "Because\nit is cold.", "Because\nit is raining.", "Because\nhe is tired." },
-                    RespuestaCorrecta = "Because\nit is cold."
-                },
-                new()
-                {
-                    Texto = "What is Tom’s favorite hat color?",
-                    Opciones = new[] { "His\nfavorite hat is green.", "His\nfavorite hat is blue.", "His\nfavorite hat is red." },
-                    RespuestaCorrecta = "His\nfavorite hat is blue."
-                }
-            };
-
             AsignarNuevaPregunta();
             ContenedorRespuesta.OnRespuestaAsignada += OnRespuestaAsignada;
+            ContenedorRespuesta.OnRespuestaLiberada += OnRespuestaLiberada;
         }
 
         private void AsignarNuevaPregunta()
         {
-            Pregunta.text = _preguntas[_preguntaActual].Texto;
-            Respuesta1.text = _preguntas[_preguntaActual].Opciones[0];
-            Respuesta2.text = _preguntas[_preguntaActual].Opciones[1];
-            Respuesta3.text = _preguntas[_preguntaActual].Opciones[2];
+            Pregunta.text = Preguntas[_preguntaActual].Texto;
+            Respuesta1.sprite = Preguntas[_preguntaActual].Opciones[0];
+            Respuesta2.sprite = Preguntas[_preguntaActual].Opciones[1];
+            Respuesta3.sprite = Preguntas[_preguntaActual].Opciones[2];
+            Debug.Log(Respuesta1.sprite.name);
+            Debug.Log(Respuesta2.sprite.name);
+            Debug.Log(Respuesta3.sprite.name);
         }
 
-        private void OnRespuestaAsignada(string respuesta)
+        private void OnRespuestaAsignada(Sprite respuesta)
         {
-            var esCorrecta = respuesta == _preguntas[_preguntaActual].RespuestaCorrecta;
-            _respuestasDadas.Add(new RespuestaDada(_preguntas[_preguntaActual].Texto, respuesta, esCorrecta));
-            _preguntaActual++;
-            
-            if (_preguntaActual < _preguntas.Count)
+            if (EsRespuestaCorrecta(respuesta))
             {
+                _respuestaFueCorrecta = true;
+            }
+            else
+            {
+                Debug.Log("Respuesta incorrecta. Se permite volver a intentar.");
+                _respuestaFueCorrecta = false;
+            }
+        }
+        
+        private bool EsRespuestaCorrecta(Sprite respuesta)
+        {
+            var preguntaActual = Preguntas[_preguntaActual];
+            var respuestaCorrecta = preguntaActual.Opciones[preguntaActual.RespuestaCorrectaIndex];
+            return respuesta == respuestaCorrecta;
+        }
+        
+        private void OnRespuestaLiberada()
+        {
+            if (!_respuestaFueCorrecta) return;
+            AvanzarOAprobarActividad();
+            _respuestaFueCorrecta = false;
+        }
+
+        private void AvanzarOAprobarActividad()
+        {
+            if (_preguntaActual + 1 < Preguntas.Count)
+            {
+                _preguntaActual++;
                 AsignarNuevaPregunta();
             }
             else
@@ -96,16 +87,9 @@ namespace Assets.READING_LEVEL
         
         private void FinalizarActividad()
         {
-            Debug.Log("Actividad finalizada. Resultados:");
-            foreach (var respuesta in _respuestasDadas)
-            {
-                Debug.Log($"Pregunta: {respuesta.Pregunta} | Respuesta: {respuesta.Respuesta} | Correcta: {respuesta.Correcta}");
-            }
-
+            Debug.Log("Actividad finalizada.");
             Pregunta.text = "¡Actividad completada!";
-            Respuesta1.text = "";
-            Respuesta2.text = "";
-            Respuesta3.text = "";
+            _preguntaActual = 0; 
         }
     }
 }

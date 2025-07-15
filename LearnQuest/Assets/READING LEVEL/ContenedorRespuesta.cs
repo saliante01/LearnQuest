@@ -3,26 +3,29 @@ using Assets.SPEAKING_LEVEL.Script;
 using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
+using UnityEngine.UI;
 
 namespace Assets.READING_LEVEL
 {
     public class ContenedorRespuesta : MonoBehaviour, IDropHandler
     {
-        public delegate void RespuestaAsignadaHandler(string texto);
+        public delegate void RespuestaAsignadaHandler(Sprite sprite);
         public event RespuestaAsignadaHandler OnRespuestaAsignada;
         
-        [SerializeField] private TextMeshProUGUI _textoRespuestaUi;
+        public delegate void RespuestaLiberadaHandler();
+        public event RespuestaLiberadaHandler OnRespuestaLiberada;
+
+        
+        [SerializeField] public Image imagenRespuesta;
+        
         
         private GameObject _objetoActual;
-    
-        public string TextoRespuesta => _textoRespuestaUi.text;
-        
 
         public void OnDrop(PointerEventData eventData)
         {
             var objetoArrastrado = eventData.pointerDrag;
             if (!EsObjetoValido(objetoArrastrado)) return;
-
+            
             AsignarRespuesta(objetoArrastrado);
             StartCoroutine(LiberarConDelay());
         }
@@ -30,17 +33,36 @@ namespace Assets.READING_LEVEL
         private bool EsObjetoValido(GameObject objeto)
         {
             if (objeto == null) return false;
-            return objeto.GetComponentInChildren<TextMeshProUGUI>() != null;
+            return objeto.GetComponentInChildren<Image>() != null;
         }
 
         private void AsignarRespuesta(GameObject nuevoObjeto)
         {
-            var display = nuevoObjeto.GetComponentInChildren<TextMeshProUGUI>();
-            _textoRespuestaUi.text = display.text;
-            _objetoActual = nuevoObjeto;
+            var hijoImagen = nuevoObjeto.transform.Find("Imagen");
+            if (hijoImagen == null)
+            {
+                Debug.LogError("No se encontró el hijo llamado 'Imagen' en el objeto arrastrado.");
+                return;
+            }
             
+            var display = hijoImagen.GetComponent<Image>();
+            Debug.Log($"Nombre imagen: {display.sprite.name}");
+            
+            _objetoActual = nuevoObjeto;
+    
             nuevoObjeto.GetComponent<CanvasGroup>().alpha = 0f;
+            nuevoObjeto.GetComponent<CanvasGroup>().blocksRaycasts = false; 
+            
+            var arrastrable = nuevoObjeto.GetComponent<ImagenArrastrable>();
+            if (arrastrable != null)
+                arrastrable.enabled = false;
+            
             nuevoObjeto.transform.SetParent(transform);
+            
+            imagenRespuesta.sprite = display.sprite;
+            imagenRespuesta.enabled = true;
+
+            OnRespuestaAsignada?.Invoke(imagenRespuesta.sprite);
         }
         
         private IEnumerator LiberarConDelay()
@@ -52,18 +74,26 @@ namespace Assets.READING_LEVEL
         private void LiberarObjeto()
         {
             if (_objetoActual == null) return;
-            
+    
             _objetoActual.GetComponent<CanvasGroup>().alpha = 1f;
-            _textoRespuestaUi.text = "";
-            
+    
             var anteriorArrastrable = _objetoActual.GetComponent<ImagenArrastrable>();
             if (anteriorArrastrable == null) return;
-            
+    
             _objetoActual.SetActive(true);
             anteriorArrastrable.RestaurarAOrigen();
-
-            OnRespuestaAsignada?.Invoke(TextoRespuesta);
+            _objetoActual.GetComponent<CanvasGroup>().blocksRaycasts = true;
+            
+            var arrastrable = _objetoActual.GetComponent<ImagenArrastrable>();
+            if (arrastrable != null)
+                arrastrable.enabled = true;
+            
+            imagenRespuesta.sprite = null;
+            imagenRespuesta.enabled = false;
+            
             _objetoActual = null;
+            
+            OnRespuestaLiberada?.Invoke();
         }
     }
 }
