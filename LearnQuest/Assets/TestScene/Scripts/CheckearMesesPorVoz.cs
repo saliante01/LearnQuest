@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using FuzzySharp;
 using UnityEngine;
 using UnityEngine.Windows.Speech;
 
@@ -23,8 +24,7 @@ namespace Assets.TestScene.Scripts
 
     public class CheckearMesesPorVoz
     {
-        private KeywordRecognizer _keywordRecognizer;
-        private Dictionary<string, Action> _comandosReconocidos;
+        private DictationRecognizer _dictationRecognizer;
         private List<ComandoVoz> _comandosMeses;
 
         public event Action<string> OnMesReconocido;
@@ -33,40 +33,43 @@ namespace Assets.TestScene.Scripts
         {
             _comandosMeses = new List<ComandoVoz>
             {
-                new("yenuari", "January"),
+                new("january", "January"),
+                new("jenewri", "January"),
+                new("february", "February"),
                 new("februari", "February"),
+                new("febuary", "February"),
+                new("marx", "March"),
                 new("march", "March"),
-                new("eipril", "April"),
+                new("april", "April"),
             };
-
-            _comandosReconocidos = new Dictionary<string, Action>();
-
-            foreach (var comando in _comandosMeses)
-            {
-                _comandosReconocidos[comando.Pronunciacion] = () => MarcarMesComoReconocido(comando);
-            }
         }
 
         public void Iniciar()
         {
-            if (_keywordRecognizer != null) return;
+            if (_dictationRecognizer != null) return;
 
-            _keywordRecognizer = new KeywordRecognizer(_comandosReconocidos.Keys.ToArray());
-            _keywordRecognizer.OnPhraseRecognized += OnKeywordRecognized;
-            _keywordRecognizer.Start();
+            _dictationRecognizer = new DictationRecognizer();
+
+            _dictationRecognizer.DictationResult += OnDictationResult;
+            _dictationRecognizer.DictationComplete += OnDictationComplete;
+            _dictationRecognizer.DictationError += (error, hresult) =>
+                Debug.LogError($"Dictation error: {error}");
+
+            _dictationRecognizer.Start();
         }
 
         public void Detener()
         {
-            if (_keywordRecognizer is { IsRunning: true })
+            if (_dictationRecognizer is { Status: SpeechSystemStatus.Running })
             {
-                _keywordRecognizer.Stop();
-                _keywordRecognizer.OnPhraseRecognized -= OnKeywordRecognized;
-                _keywordRecognizer.Dispose(); 
-                _keywordRecognizer = null;    
+                _dictationRecognizer.Stop();
+                _dictationRecognizer.DictationResult -= OnDictationResult;
+                _dictationRecognizer.DictationComplete -= OnDictationComplete;
+                _dictationRecognizer.Dispose();
+                _dictationRecognizer = null;
             }
         }
-        
+
         public void ResetearReconocidos()
         {
             foreach (var comando in _comandosMeses)
@@ -75,23 +78,41 @@ namespace Assets.TestScene.Scripts
             }
         }
 
-        private void OnKeywordRecognized(PhraseRecognizedEventArgs args)
+        private void OnDictationResult(string text, ConfidenceLevel confidence)
         {
-            Debug.Log("Mes reconocido: " + args.text);
+            Debug.Log("Texto dictado: " + text);
 
-            if (_comandosReconocidos.TryGetValue(args.text, out var accion))
-                accion.Invoke();
+            var mejorCoincidencia = _comandosMeses
+                .Select(c => new
+                {
+                    Comando = c,
+                    Puntaje = Fuzz.PartialRatio(text.ToLower(), c.Pronunciacion.ToLower())
+                })
+                .OrderByDescending(x => x.Puntaje)
+                .FirstOrDefault();
+
+            if (mejorCoincidencia != null && mejorCoincidencia.Puntaje >= 65) 
+            {
+                if (!mejorCoincidencia.Comando.Reconocido)
+                {
+                    mejorCoincidencia.Comando.Reconocido = true;
+                    Debug.Log($"Coincidencia fuzzy: {mejorCoincidencia.Comando.Nombre} ({mejorCoincidencia.Puntaje})");
+                    OnMesReconocido?.Invoke(mejorCoincidencia.Comando.Nombre);
+                }
+            }
             else
-                Debug.LogWarning($"Palabra no reconocida: {args.text}");
+            {
+                Debug.LogWarning("No se encontró una coincidencia lo suficientemente buena.");
+            }
         }
 
-        private void MarcarMesComoReconocido(ComandoVoz comando)
+        private void OnDictationComplete(DictationCompletionCause cause)
         {
-            if (comando.Reconocido) return;
-
-            comando.Reconocido = true;
-            Debug.Log($"Mes reconocido: {comando.Nombre}");
-            OnMesReconocido?.Invoke(comando.Nombre);
+            Debug.Log("Dictation complete: " + cause);
+            if (cause == DictationCompletionCause.Complete)
+            {
+                _dictationRecognizer?.Start();
+            }
         }
     }
 }

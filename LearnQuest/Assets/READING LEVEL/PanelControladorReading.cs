@@ -53,7 +53,7 @@ namespace Assets.READING_LEVEL
             }
             else
             {
-                mainDialogSystemInfo.text = "Oops creo que esa no es la respuesta, vuelve a intentarlo";
+                mainDialogSystemInfo.text = "Oops! That's not quite right. Try again!";
                 Debug.Log("Oops creo que esa no es la respuesta, vuelve a intentarlo");
                 _respuestaFueCorrecta = false;
             }
@@ -89,12 +89,10 @@ namespace Assets.READING_LEVEL
         private void FinalizarActividad()
         {
             Debug.Log("Actividad finalizada.");
-            Pregunta.text = "¡Actividad completada!";
-            mainDialogSystemInfo.text = "Muy bien! Haz completado el nivel, presiona continuar para volver al menu";
+            Pregunta.text = "You did it! Reading finished!";
+            mainDialogSystemInfo.text = "All right! You've completed the activity. Now you can move on to the next one.";
             _preguntaActual = 0; 
             continuarButton.SetActive(true);
         }
-
-
     }
 }

@@ -2491,9 +2491,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   textoDialogo: {fileID: 1391301485}
   lineasDialogo:
-  - Bienvenido al nivel de Reading
-  - Hoy leeremos un texto y responderemos unas preguntas
-  - "Pon atenci\xF3n y responde!"
+  - Welcome to the Reading zone!
+  - Today, we're going to read a short text and then answer a few questions.
+  - Pay close attention and do your best!
   velocidadEscritura: 0.05
   pausaEntreLineas: 1.5
   UIActividad: {fileID: 1351396906}

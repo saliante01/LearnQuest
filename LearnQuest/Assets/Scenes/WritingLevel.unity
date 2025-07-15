@@ -2763,9 +2763,9 @@ MonoBehaviour:
   correctWord2: 10
   correctWord3: SATURDAY
   introLines:
-  - 'Bienvenido al correo '
-  - Necesito que me ayudes a corroborar unas imagenes
-  - Escribe el texto que se te indica
+  - Welcome to the post office!
+  - I need you to help me verify a letter.
+  - Please write down the text as instructed.
   typingSpeed: 0.05
   volverMenuBoton: {fileID: 1371527304}
 --- !u!1 &1515714797

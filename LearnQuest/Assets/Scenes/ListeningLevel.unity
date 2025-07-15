@@ -3826,9 +3826,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   dialogText: {fileID: 1877650211}
   dialogLines:
-  - Bienvenido a la biblioteca
-  - 'Hoy escuharemos un discurso '
-  - "Presta atenci\xF3n y responde las preguntas"
+  - Welcome to the library!
+  - Today we'll hear a speach.
+  - Pay attention and then answer the question.
   typingSpeed: 0.05
   waitAfterLine: 1
   isDialogueFinished: 0

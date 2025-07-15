@@ -25,13 +25,13 @@ public class EvaluationManager : MonoBehaviour
         if (selectionManager.IsAudio1Correct())
         {
             selectionManager.ValidateAudio1();
-            feedbackDisplay.ShowMessage("Audio 1: ¡Correcto!");
+            feedbackDisplay.ShowMessage("Audio 1: Correct!");
             audio1Correct = true;
         }
         else
         {
-            selectionManager.ValidateAudio1(); // Aún resetea si no es correcta
-            feedbackDisplay.ShowMessage("Audio 1: Incorrecto. Intenta de nuevo.");
+            selectionManager.ValidateAudio1(); // Aï¿½n resetea si no es correcta
+            feedbackDisplay.ShowMessage("Not quite right. Give Audio 1 another try!");
         }
 
         CheckIfLevelCompleted();
@@ -42,13 +42,13 @@ public class EvaluationManager : MonoBehaviour
         if (selectionManager.IsAudio2Correct())
         {
             selectionManager.ValidateAudio2();
-            feedbackDisplay.ShowMessage("Audio 2: ¡Correcto!");
+            feedbackDisplay.ShowMessage("Audio 2: Correct!");
             audio2Correct = true;
         }
         else
         {
-            selectionManager.ValidateAudio2(); // Aún resetea si no es correcta
-            feedbackDisplay.ShowMessage("Audio 2: Incorrecto. Intenta de nuevo.");
+            selectionManager.ValidateAudio2(); // Aï¿½n resetea si no es correcta
+            feedbackDisplay.ShowMessage("Not quite right. Give Audio 2 another try!");
         }
 
         CheckIfLevelCompleted();
@@ -58,7 +58,7 @@ public class EvaluationManager : MonoBehaviour
     {
         if (audio1Correct && audio2Correct)
         {
-            feedbackDisplay.ShowMessage("Perfecto, has completado el nivel. Ahora puedes continuar al siguiente nivel.");
+            feedbackDisplay.ShowMessage("Great job! You've finished the level. Time to move on to the next one!");
             continueButton.gameObject.SetActive(true);
         }
     }

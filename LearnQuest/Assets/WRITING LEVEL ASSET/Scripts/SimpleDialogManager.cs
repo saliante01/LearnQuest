@@ -119,14 +119,14 @@ public class SimpleDialogManager : MonoBehaviour
             word2.Equals(correctWord2, System.StringComparison.OrdinalIgnoreCase) &&
             word3.Equals(correctWord3, System.StringComparison.OrdinalIgnoreCase))
         {
-            ShowMessage("¡Excelente!, Haz completado el nivel de Writing");
+            ShowMessage("¡Excelent! You've been a great help. Now you can move on to the next one.");
             volverMenuBoton.SetActive(true);
             validateButton.gameObject.SetActive(false);
         }
         else
         {
             failCounter++;
-            ShowMessage("Creo que algo no coincide, vuelve a intentarlo");
+            ShowMessage("I think something isn't right. Try again!");
             Debug.Log("Fallos acumulados: " + failCounter);
         }
     }
@@ -146,12 +146,6 @@ public class SimpleDialogManager : MonoBehaviour
     }
 
     public void VolverMenu() {
-
         LevelLoader.LoadLevel("SampleScene");
-
     }
-
-
-
-    
 }
